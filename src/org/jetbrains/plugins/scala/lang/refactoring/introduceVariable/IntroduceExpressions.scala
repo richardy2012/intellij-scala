@@ -24,7 +24,7 @@ import org.jetbrains.plugins.scala.lang.psi.api.toplevel.templates.{ScClassParen
 import org.jetbrains.plugins.scala.lang.psi.api.toplevel.typedef.ScMember
 import org.jetbrains.plugins.scala.lang.psi.impl.ScalaPsiElementFactory._
 import org.jetbrains.plugins.scala.lang.psi.types.ScType
-import org.jetbrains.plugins.scala.lang.refactoring.introduceVariable.ScalaInplaceVariableIntroducer.addTypeAnnotation
+import org.jetbrains.plugins.scala.lang.refactoring.introduceVariable.ScalaInplaceVariableIntroducer.needsTypeAnnotation
 import org.jetbrains.plugins.scala.lang.refactoring.namesSuggester.NameSuggester
 import org.jetbrains.plugins.scala.lang.refactoring.util.ScalaRefactoringUtil._
 import org.jetbrains.plugins.scala.lang.refactoring.util.{ScalaRefactoringUtil, ScalaVariableValidator, ValidationReporter}
@@ -297,7 +297,7 @@ trait IntroduceExpressions {
 
     def createVariableDefinition(): PsiElement = {
       if (fastDefinition) {
-        val addType = addTypeAnnotation(firstElement, expression, fromDialogMode)
+        val addType = needsTypeAnnotation(firstElement, fromDialogMode)
         ScalaApplicationSettings.getInstance.INTRODUCE_VARIABLE_EXPLICIT_TYPE = addType
         replaceRangeByDeclaration(replacedOccurences(0), createDeclaration(varName, if (addType) typeName else "", isVariable,
           ScalaRefactoringUtil.unparExpr(expression)))
@@ -322,7 +322,7 @@ trait IntroduceExpressions {
         }
         val anchor = parent.getChildren.find(_.getTextRange.contains(firstRange)).getOrElse(parent.getLastChild)
         if (anchor != null) {
-          val addType = addTypeAnnotation(anchor, expression, fromDialogMode)
+          val addType = needsTypeAnnotation(anchor, fromDialogMode)
 
           val created = createDeclaration(varName, if (addType) typeName else "", isVariable,
             ScalaRefactoringUtil.unparExpr(expression))
