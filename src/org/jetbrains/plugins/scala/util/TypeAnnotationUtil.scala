@@ -172,9 +172,8 @@ object TypeAnnotationUtil {
       result.innerResolveResult
         .getOrElse(result).element
 
-    import ScFunction.Name.Apply
     reference.bind().map(resolvedElement).exists {
-      case function: ScFunction => function.name == Apply && reference.refName != Apply
+      case function: ScFunction => function.isApplyMethod
       case _ => false
     }
   }
